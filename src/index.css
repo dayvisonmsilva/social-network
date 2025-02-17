@@ -1,0 +1,249 @@
+:root {
+  --primary: #1da1f2;
+  --background: #15202b;
+  --text: white;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.login-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  text-align: center;
+
+  input {
+    width: 100%;
+    padding: 0.8rem;
+    margin: 1rem 0;
+    background: #253341;
+    border: 1px solid #38444d;
+    border-radius: 4px;
+    color: inherit;
+  }
+
+  button {
+    background: var(--primary);
+    padding: 0.8rem 1.5rem;
+    border-radius: 9999px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}
+
+.feed-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+
+  header {
+    padding: 1rem;
+    border-bottom: 1px solid #38444d;
+    margin-bottom: 1rem;
+  }
+}
+
+.new-post {
+  background: #192734;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+
+  textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    resize: none;
+    color: inherit;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .post-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      background: linear-gradient(135deg, #1da1f2 0%, #0f79d1 100%);
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      position: relative;
+      /* Novo */
+      overflow: hidden;
+      /* Novo */
+
+      &:hover {
+        background: linear-gradient(135deg, #0f79d1 0%, #0c69b8 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      &:active {
+        transform: translateY(0);
+        scale: 0.98;
+      }
+
+      &:disabled {
+        background: #2d3748;
+        color: #718096;
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -150%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(to right,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.1) 50%,
+            rgba(255, 255, 255, 0) 100%);
+        transform: rotate(30deg);
+        /* Alterado */
+        transition: all 0.6s;
+        /* Alterado */
+      }
+
+      &:hover::after {
+        left: 150%;
+        /* Alterado */
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+      }
+    }
+
+  }
+}
+
+.post {
+  background: #192734;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+
+  .post-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    .user {
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .timestamp {
+      color: #8899a6;
+      font-size: 0.8rem;
+    }
+  }
+
+  .post-content {
+    margin-bottom: 1rem;
+  }
+
+  .post-actions {
+    display: flex;
+    gap: 2rem;
+    color: #8899a6;
+
+    button {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+
+      &:hover {
+        color: var(--primary);
+      }
+    }
+  }
+}
+
+.app-header {
+  background: #192734;
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid #38444d;
+}
+
+.header-content {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.user-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.logout-button {
+  background: #e0245e;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-weight: bold;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.username {
+  color: #8899a6;
+  font-size: 0.9rem;
+}
