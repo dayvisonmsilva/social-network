@@ -7,8 +7,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="manifest" href="/manifest.json">
   <script>
-    if (typeof navigator.serviceWorker !== "undefined") {
-      navigator.serviceWorker.register("serviceworker.js");
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/serviceworker.js", { scope: "/" })
+        .then(() => console.log("Service Worker registrado com sucesso!"))
+        .catch(err => console.error("Erro ao registrar Service Worker:", err));
     }
   </script>
   <title>SocialVite</title>
