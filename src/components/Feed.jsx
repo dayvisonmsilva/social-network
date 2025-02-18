@@ -59,31 +59,33 @@ const Feed = () => {
 
   // Função para tratar likes (curtir/descurtir)
   const handleLike = async (post) => {
-    const postId = post.postId;
-    const isLiked = likedPosts.includes(postId);
-  
+    // Definindo o id do post (a API retorna o campo 'postId')
+    const postId = post.postId || post.id
+    const isLiked = likedPosts.includes(postId)
     try {
       const res = await fetch(`${POSTS_API}/${postId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: isLiked ? 'unlike' : 'like' })
-      });
-  
+      })
       if (res.ok) {
-        const updatedPost = await res.json();
-        
-        setPosts(posts.map(p => 
-          p.postId === postId ? { ...p, likes: updatedPost.likes } : p
-        ));
-        
-        setLikedPosts(prev => 
-          isLiked 
-            ? prev.filter(id => id !== postId) 
-            : [...prev, postId]
-        );
+        // Atualiza o estado local para refletir o like/deslike
+        if (isLiked) {
+          setLikedPosts(likedPosts.filter(id => id !== postId))
+          setPosts(posts.map(p => (p.postId === postId || p.id === postId)
+            ? { ...p, likes: p.likes - 1 }
+            : p))
+        } else {
+          setLikedPosts([...likedPosts, postId])
+          setPosts(posts.map(p => (p.postId === postId || p.id === postId)
+            ? { ...p, likes: p.likes + 1 }
+            : p))
+        }
+      } else {
+        console.error("Erro ao atualizar like:", res.statusText)
       }
     } catch (error) {
-      console.error("Erro ao atualizar like:", error);
+      console.error("Erro ao atualizar like:", error)
     }
   };
 
