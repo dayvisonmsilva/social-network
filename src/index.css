@@ -247,3 +247,27 @@ body {
   color: #8899a6;
   font-size: 0.9rem;
 }
+
+.timestamp {
+  color: #8899a6;
+  font-size: 0.8rem;
+  margin-left: auto;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.like-button.liked {
+  color: #e0245e;
+  animation: pulse 0.5s ease;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}

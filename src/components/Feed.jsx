@@ -2,42 +2,94 @@ import { useState, useEffect } from 'react'
 import Post from './Post'
 import Header from './Header'
 
+const POSTS_API = 'https://eql90qiekd.execute-api.us-east-1.amazonaws.com/dev/posts'
+
 const Feed = () => {
   const [posts, setPosts] = useState([])
   const [newPost, setNewPost] = useState('')
+  const [likedPosts, setLikedPosts] = useState([]) // Armazena os IDs dos posts curtidos nesta sessão
   const currentUser = localStorage.getItem('currentUser') || 'Anônimo'
 
+  // Busca os posts do banco via API
+  const fetchPosts = async () => {
+    try {
+      const res = await fetch(POSTS_API);
+      const data = await res.json();
+      
+      // Ordenar posts por data de criação (mais recente primeiro)
+      const sortedPosts = data.sort((a, b) => 
+        new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      
+      setPosts(sortedPosts);
+    } catch (error) {
+      console.error("Erro ao buscar posts:", error);
+    }
+  };
+
   useEffect(() => {
-    // Mock de dados iniciais
-    const mockPosts = [
-      {
-        id: 1,
-        content: 'Bem-vindo ao SocialVite! 🚀',
-        user: 'admin',
-        likes: 42,
-        timestamp: '2024-01-01T12:00:00Z'
-      }
-    ]
-    setPosts(mockPosts)
+    fetchPosts()
   }, [])
 
-  const handleNewPost = () => {
+  // Criação de novo post via API
+  const handleNewPost = async () => {
     if (newPost.trim()) {
-      const post = {
-        id: Date.now(),
+      const postData = {
         content: newPost,
-        user: currentUser,
-        likes: 0,
-        timestamp: new Date().toISOString()
+        authorId: currentUser
       }
-      setPosts([post, ...posts])
-      setNewPost('')
+      try {
+        const res = await fetch(POSTS_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(postData)
+        })
+        if (res.ok) {
+          const createdPost = await res.json()
+          setPosts([createdPost, ...posts])
+          setNewPost('')
+        } else {
+          console.error("Erro ao criar post:", res.statusText)
+        }
+      } catch (error) {
+        console.error("Erro ao criar post:", error)
+      }
     }
   }
 
+  // Função para tratar likes (curtir/descurtir)
+  const handleLike = async (post) => {
+    const postId = post.postId;
+    const isLiked = likedPosts.includes(postId);
+  
+    try {
+      const res = await fetch(`${POSTS_API}/${postId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: isLiked ? 'unlike' : 'like' })
+      });
+  
+      if (res.ok) {
+        const updatedPost = await res.json();
+        
+        setPosts(posts.map(p => 
+          p.postId === postId ? { ...p, likes: updatedPost.likes } : p
+        ));
+        
+        setLikedPosts(prev => 
+          isLiked 
+            ? prev.filter(id => id !== postId) 
+            : [...prev, postId]
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar like:", error);
+    }
+  };
+
   return (
     <div className="feed-container">
-      <Header />  {/* Substitui o header antigo */}
+      <Header />
 
       <div className="new-post">
         <textarea
@@ -57,9 +109,13 @@ const Feed = () => {
       </div>
 
       <div className="posts-list">
-        {posts.map(post => (
-          <Post key={post.id} post={post} />
-        ))}
+        {posts.map((post) => {
+          const postId = post.postId || post.id
+          const liked = likedPosts.includes(postId)
+          return (
+            <Post key={postId} post={post} onLike={handleLike} liked={liked} />
+          )
+        })}
       </div>
     </div>
   )
